@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res/com.example.makesence_cardview"
     android:layout_width="match_parent"
     android:layout_height="wrap_content" >
 
@@ -114,11 +113,48 @@
                 </TableRow>
 
                 <TableRow
-                    android:id="@+id/tableRow4"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="3dp"
-                    android:gravity="center_vertical" >
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_selectable_textview"
+                        android:padding="10dp"
+                        android:text="Ghi chú:"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/note_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/bg_selectable_textview"
+                        android:text="" />
+                </TableRow>
+                <TableRow
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="3dp"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/bg_selectable_textview"
+                        android:padding="10dp"
+                        android:text="@string/tr_ng_th_i"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/trangthai_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/bg_selectable_textview"
+                        android:text="@string/ang_ch" />
                 </TableRow>
             </TableLayout>
         </LinearLayout>

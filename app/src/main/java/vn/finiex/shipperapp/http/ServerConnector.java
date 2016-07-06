@@ -3,6 +3,7 @@ package vn.finiex.shipperapp.http;
 import android.util.Log;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -17,6 +18,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import vn.finiex.shipperapp.model.AccessToken;
 import vn.finiex.shipperapp.model.Order;
+import vn.finiex.shipperapp.model.StatusOrder;
 import vn.finiex.shipperapp.model.Task;
 import vn.finiex.shipperapp.model.UserInfo;
 import vn.finiex.shipperapp.model.UserLocation;
@@ -80,9 +82,18 @@ public class ServerConnector {
 			@Override
 			public void onResponse(Call<Object> arg0, Response<Object> arg1) {
 				Log.d("UPDATE_LOCATION", arg1.toString());
-				
 			}
 		});
+	}
+	public Object updateOrder(String orderId, StatusOrder data){
+		Call<Object> call= service.updateOrder(orderId, accessToken.getAccessToken(), data);
+		try {
+			Response<Object> ro = call.execute();
+			return ro.body();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 	
 	public List<Task> getAllTask(){
@@ -90,6 +101,7 @@ public class ServerConnector {
 		try {
 			Response<List<Task>> taskList= service.getAllTask(accessToken.getUserId(), accessToken.getAccessToken()).execute();
 			List<Task> lt = taskList.body();
+			Collections.reverse(lt);
 			for (Task task: lt) {
 				task.getOrderOnline();
 			}

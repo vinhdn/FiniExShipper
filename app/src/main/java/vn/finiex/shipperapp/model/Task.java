@@ -1,8 +1,13 @@
 package vn.finiex.shipperapp.model;
 
+import android.content.Intent;
+
 import java.util.List;
 
+import vn.finiex.shipperapp.ShipperApplication;
 import vn.finiex.shipperapp.http.ServerConnector;
+
+import static vn.finiex.shipperapp.TrackerService.UPDATE_TASK;
 
 public class Task {
 
@@ -175,6 +180,7 @@ public class Task {
     public void getOrderOnline(){
         if(_LadingID >= 0){
             this.order = ServerConnector.getInstance().getOrderOfTask(_LadingID);
+            ShipperApplication.get().sendBroadcast(new Intent(UPDATE_TASK));
         }
     }
 }

@@ -23,9 +23,13 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.daimajia.swipe.SwipeLayout;
+
 import vn.finiex.shipperapp.R;
+import vn.finiex.shipperapp.activities.TaskDetailActivity;
 import vn.finiex.shipperapp.model.Order;
 import vn.finiex.shipperapp.model.Task;
+import vn.finiex.shipperapp.utils.StringUtils;
 
 public class CurrentOrderAdapter extends RecyclerView.Adapter<CurrentOrderAdapter.ViewHolder> {
 
@@ -56,6 +60,9 @@ public class CurrentOrderAdapter extends RecyclerView.Adapter<CurrentOrderAdapte
     public void onBindViewHolder(ViewHolder vh, final int i) {
         vh.mTitleTv.setText(myArray.get(i).get_LadingName());
         vh.mDateTime.setText(myArray.get(i).get_DateCreated());
+        if(!TextUtils.isEmpty(myArray.get(i).get_Notes()))
+            vh.mNoteTv.setText(myArray.get(i).get_Notes());
+        vh.mStatusTv.setText(getTrangThaiStr(myArray.get(i).get_Status()));
         if (myArray.get(i).getOrder() == null || myArray.get(i).getOrder().size() <= 0) {
 
         } else {
@@ -65,7 +72,7 @@ public class CurrentOrderAdapter extends RecyclerView.Adapter<CurrentOrderAdapte
             if (!TextUtils.isEmpty(myArray.get(i).getOrder().get(0).getNoitra()))
                 vh.mAddress.setText(myArray.get(i).getOrder().get(0).getNoitra());
             if (!TextUtils.isEmpty(myArray.get(i).getOrder().get(0).getEndDate()))
-                vh.mDateTime.setText(myArray.get(i).getOrder().get(0).getEndDate());
+                vh.mDateTime.setText(StringUtils.dataToFeauture(myArray.get(i).getOrder().get(0).getEndDate()));
         }
 
         vh.mPhoneNo.setOnClickListener(new OnClickListener() {
@@ -105,11 +112,10 @@ public class CurrentOrderAdapter extends RecyclerView.Adapter<CurrentOrderAdapte
 
             @Override
             public void onClick(View v) {
-
                 if (myArray.get(i).getOrder() == null || myArray.get(i).getOrder().size() <= 0)
                     return;
-
                 String addr = myArray.get(i).getOrder().get(0).getNoitra();
+                if(TextUtils.isEmpty(addr)) return;
                 addr = addr.trim();
                 addr = addr.replaceAll(" ", "+");
 
@@ -117,6 +123,15 @@ public class CurrentOrderAdapter extends RecyclerView.Adapter<CurrentOrderAdapte
                         Uri.parse("http://maps.google.com/maps?f=d&daddr=" + addr));
                 intent.setComponent(new ComponentName("com.google.android.apps.maps",
                         "com.google.android.maps.MapsActivity"));
+                mContext.startActivity(intent);
+            }
+        });
+        vh.itemView.findViewById(R.id.card_view).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(mContext, TaskDetailActivity.class);
+                intent.putExtra("id", myArray.get(i).get_LadingID());
+                intent.putExtra("name", myArray.get(i).get_LadingName());
                 mContext.startActivity(intent);
             }
         });
@@ -143,6 +158,8 @@ public class CurrentOrderAdapter extends RecyclerView.Adapter<CurrentOrderAdapte
         TextView mAddress;
         TextView mDateTime;
         TextView mTitleTv;
+        TextView mNoteTv;
+        TextView mStatusTv;
 
         //        ImageView mPhoto1;
         LinearLayout ln;
@@ -152,12 +169,27 @@ public class CurrentOrderAdapter extends RecyclerView.Adapter<CurrentOrderAdapte
             cv = (CardView) itemView.findViewById(R.id.card_view);
             mTitleTv = (TextView) itemView.findViewById(R.id.txt_task_title);
             mTaskType = (TextView) itemView.findViewById(R.id.txt_location);
+            mStatusTv = (TextView) itemView.findViewById(R.id.trangthai_tv);
             mPhoneNo = (TextView) itemView.findViewById(R.id.txtPhone);
             mAddress = (TextView) itemView.findViewById(R.id.txtAddr);
             mDateTime = (TextView) itemView.findViewById(R.id.txtTime);
-
+            mNoteTv = (TextView) itemView.findViewById(R.id.note_tv);
 //			mPhoto1 = (ImageView)itemView.findViewById(R.id.img_multi_picture);
             ln = (LinearLayout) itemView.findViewById(R.id.ln_card_view);
         }
+    }
+
+    private String getTrangThaiStr(int type) {
+        switch (type) {
+            case 1:
+                return "Thiết lập";
+            case 2:
+                return "Vận chuyển";
+            case 3:
+                return "Hoàn thành";
+            case 4:
+                return "Vận đơn lỗi";
+        }
+        return "Chờ cập nhật";
     }
 }

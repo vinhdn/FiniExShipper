@@ -1,6 +1,6 @@
 package vn.finiex.shipperapp.model;
 
-public class Order {
+public class Order{
 	private int _ID;
 
 	private boolean IsLog;
@@ -17,6 +17,8 @@ public class Order {
 
     private int _OrderID;
 
+    private int OrderID;
+
     private String _DateCreated;
 
     private String OldValue;
@@ -24,8 +26,8 @@ public class Order {
     private String Noilay;
     private String Noitra;
 
-    private String Prices;
-    private String PriceShip;
+    private double Prices;
+    private double PriceShip;
 
     private String OrderName;
     private int Status;
@@ -58,19 +60,19 @@ public class Order {
         Noilay = noilay;
     }
 
-    public String getPrices() {
+    public double getPrices() {
         return Prices;
     }
 
-    public void setPrices(String prices) {
+    public void setPrices(double prices) {
         Prices = prices;
     }
 
-    public String getPriceShip() {
+    public double getPriceShip() {
         return PriceShip;
     }
 
-    public void setPriceShip(String priceShip) {
+    public void setPriceShip(double priceShip) {
         PriceShip = priceShip;
     }
 
@@ -250,5 +252,13 @@ public class Order {
 
     public void setNoitra(String noitra) {
         Noitra = noitra;
+    }
+
+    public int getOrderID() {
+        return OrderID;
+    }
+
+    public void setOrderID(int orderID) {
+        OrderID = orderID;
     }
 }

@@ -2,17 +2,23 @@ package vn.finiex.shipperapp;
 
 import java.util.List;
 
+import android.app.Activity;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -25,6 +31,8 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+import vn.finiex.shipperapp.activities.NotifiActivity;
+import vn.finiex.shipperapp.dialog.DialogNotifi;
 import vn.finiex.shipperapp.http.ServerConnector;
 import vn.finiex.shipperapp.model.AccessToken;
 import vn.finiex.shipperapp.model.Task;
@@ -74,7 +82,6 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
         startRequestTask();
         buildGoogleApiClient();
         mGoogleApiClient.connect();
-
     }
 
     protected synchronized void buildGoogleApiClient() {
@@ -110,14 +117,21 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
         }
     }
 
-    public void startRequestTask() {
+    public void requestTask() {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 mListTask = connector.getAllTask();
+                sendBroadcast(new Intent(UPDATE_TASK));
             }
         }).start();
-        countDownTimer = new CountDownTimer(10 * 1000, 1 * 1000) {
+    }
+
+    private boolean isRing = false;
+
+    public void startRequestTask() {
+        requestTask();
+        countDownTimer = new CountDownTimer(60 * 1000, 1 * 1000) {
 
             @Override
             public void onTick(long millisUntilFinished) {
@@ -136,7 +150,13 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                             System.out.println("***** TASK******");
                             if (listTask.size() > 0 && mListTask != null && mListTask.size() > 0) {
                                 if (listTask.get(0).get_LadingID() != mListTask.get(0).get_LadingID()) {
-
+                                    Intent intent = new Intent(TrackerService.this, NotifiActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
+                                }else if(listTask.get(0).getOrder() != null && mListTask.get(0).getOrder() != null && listTask.get(0).getOrder().size() > mListTask.get(0).getOrder().size()){
+                                    Intent intent = new Intent(TrackerService.this, NotifiActivity.class);
+                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(intent);
                                 }
                             }
                             mListTask = listTask;

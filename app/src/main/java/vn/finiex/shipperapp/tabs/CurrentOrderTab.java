@@ -51,7 +51,7 @@ public class CurrentOrderTab extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
-		if(mAdapter != null) {
+        if (mAdapter != null) {
             mAdapter.setMyArray(ShipperApplication.mService.getListTask());
             mAdapter.notifyDataSetChanged();
         }
@@ -59,14 +59,13 @@ public class CurrentOrderTab extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(TrackerService.UPDATE_TASK)) {
-                    if(mAdapter != null) {
+                    if (mAdapter != null) {
                         mAdapter.setMyArray(ShipperApplication.mService.getListTask());
                         mAdapter.notifyDataSetChanged();
                     }
                 }
             }
         };
-        registerReceiver();
     }
 
     @Override
@@ -97,7 +96,8 @@ public class CurrentOrderTab extends Fragment {
 //        	sceneList.add(tmp);
         }
 
-        sceneList = ShipperApplication.mService.getListTask();
+        if (ShipperApplication.mService != null)
+            sceneList = ShipperApplication.mService.getListTask();
         // 3. create an adapter 
         mAdapter = new CurrentOrderAdapter(activity, sceneList);
         mAdapter.setMyArray(ShipperApplication.mService.getListTask());
@@ -121,7 +121,7 @@ public class CurrentOrderTab extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(mAdapter != null) {
+        if (mAdapter != null) {
             mAdapter.setMyArray(ShipperApplication.mService.getListTask());
             mAdapter.notifyDataSetChanged();
         }
@@ -167,11 +167,20 @@ public class CurrentOrderTab extends Fragment {
 
     private boolean isReceiverRegistered = false;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        registerReceiver();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        getActivity().unregisterReceiver(mRegistrationBroadcastReceiver);
+    }
+
     private void registerReceiver() {
-        if (!isReceiverRegistered) {
             getActivity().registerReceiver(mRegistrationBroadcastReceiver,
                     new IntentFilter(TrackerService.UPDATE_TASK));
-            isReceiverRegistered = true;
-        }
     }
 }

@@ -26,9 +26,17 @@ public class ShipperApplication extends Application {
 	private AccessToken accessToken;
 //	private String uId;
 	SharedPreferences preferences;
+
+	static ShipperApplication instance;
+
+	public static ShipperApplication get(){
+		return instance;
+	}
+
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		instance = this;
 		MultiDex.install(this);
 		preferences = getSharedPreferences(PREFERENCE_NAME, MODE_PRIVATE);
 		ServerConnector connector = ServerConnector.getInstance();

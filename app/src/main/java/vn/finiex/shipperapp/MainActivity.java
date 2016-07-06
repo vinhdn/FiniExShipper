@@ -1,14 +1,19 @@
 package vn.finiex.shipperapp;
 
+import android.*;
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.content.LocalBroadcastManager;
@@ -58,7 +63,7 @@ public class MainActivity extends BaseActivity {
     private CharSequence TabTitles[] = {"Map", "Pictures"};
     private int Numboftabs = 3;
 
-    private String TITLES[] = {"Task", "History", "Contact Admin", "Logout",};
+    private String TITLES[] = {"Nhiệm vụ", "History", "Contact Admin", "Logout",};
     private int ICONS[] = {R.drawable.ic_action_event,
             R.drawable.ic_action_history, R.drawable.ic_action_group, R.drawable.ic_action_logout};
     private String NAME = "ABC";
@@ -69,7 +74,7 @@ public class MainActivity extends BaseActivity {
     @Override
     public void onAttachedToWindow() {
         if (mToolbar != null)
-            mToolbar.setTitle(TITLES[2]);
+            mToolbar.setTitle(TITLES[0]);
         super.onAttachedToWindow();
     }
 
@@ -136,10 +141,10 @@ public class MainActivity extends BaseActivity {
                         Toast.makeText(MainActivity.this, "Comming soon...", Toast.LENGTH_LONG).show();
                         return;
                     }
-                    if(mDrawerLeft.getChildPosition(v) == 1){
+                    if (mDrawerLeft.getChildPosition(v) == 1) {
                         pager.setCurrentItem(0);
-                    }else
-                    pager.setCurrentItem(mDrawerLeft.getChildPosition(v) - 1);
+                    } else
+                        pager.setCurrentItem(mDrawerLeft.getChildPosition(v) - 1);
                 } else {
                     //TODO : log out
                     ((ShipperApplication) getApplication()).logout();
@@ -179,7 +184,7 @@ public class MainActivity extends BaseActivity {
         });
         pager.setAdapter(adapter);
         pager.setOffscreenPageLimit(3);
-        pager.setCurrentItem(2);
+        pager.setCurrentItem(0);
 
         tabs = (SlidingTabLayout) findViewById(R.id.tabs);
         tabs.setDistributeEvenly(true);
@@ -269,5 +274,27 @@ public class MainActivity extends BaseActivity {
     protected void onDestroy() {
         super.onDestroy();
         stopService(new Intent(this, TrackerService.class));
+    }
+
+    @TargetApi(Build.VERSION_CODES.M)
+    private void checkPermisstion() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        69);
+            }if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        70);
+            }if (checkSelfPermission(Manifest.permission.CALL_PHONE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{android.Manifest.permission.CALL_PHONE},
+                        71);
+            }if (checkSelfPermission(Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.CAMERA},
+                        72);
+            }
     }
 }
