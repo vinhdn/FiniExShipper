@@ -1,0 +1,22 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/content_frame"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <android.support.v7.widget.RecyclerView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/lv_data"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <ImageButton
+        android:layout_gravity="bottom|right"
+        android:id="@+id/btnTakePic"
+        android:layout_margin="10dp"
+        android:src="@drawable/ic_action_camera"
+        android:background="@drawable/circle"
+        android:layout_width="64dp"
+        android:layout_height="64dp"/>
+
+</FrameLayout>
