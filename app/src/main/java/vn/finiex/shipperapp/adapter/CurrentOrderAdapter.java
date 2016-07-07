@@ -72,7 +72,7 @@ public class CurrentOrderAdapter extends RecyclerView.Adapter<CurrentOrderAdapte
             if (!TextUtils.isEmpty(myArray.get(i).getOrder().get(0).getNoitra()))
                 vh.mAddress.setText(myArray.get(i).getOrder().get(0).getNoitra());
             if (!TextUtils.isEmpty(myArray.get(i).getOrder().get(0).getEndDate()))
-                vh.mDateTime.setText(StringUtils.dataToFeauture(myArray.get(i).getOrder().get(0).getEndDate()));
+                vh.mDateTime.setText(StringUtils.dateToDate(myArray.get(i).getOrder().get(0).getEndDate()));
         }
 
         vh.mPhoneNo.setOnClickListener(new OnClickListener() {

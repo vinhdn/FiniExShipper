@@ -39,6 +39,7 @@ public class StringUtils {
         if(dat == null){
             dat = getDateFromString(DATE_FORMAT_SERVER_02, date);
         }
+        if(dat == null) return "";
         return getStringFromDate(DATE_FORMAT_SHOW, dat);
     }
 
@@ -48,6 +49,7 @@ public class StringUtils {
             if(past == null){
                 past = getDateFromString(DATE_FORMAT_SERVER_02, date);
             }
+            if(past == null) return "Đang tính";
             Date now = new Date();
             long time = past.getTime() - now.getTime();
             if(time <= 0) return "Hết giờ";

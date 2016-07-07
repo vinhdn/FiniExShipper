@@ -51,7 +51,7 @@ public class CurrentOrderTab extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.activity = activity;
-        if (mAdapter != null) {
+        if (mAdapter != null && ShipperApplication.mService != null) {
             mAdapter.setMyArray(ShipperApplication.mService.getListTask());
             mAdapter.notifyDataSetChanged();
         }
@@ -59,7 +59,7 @@ public class CurrentOrderTab extends Fragment {
             @Override
             public void onReceive(Context context, Intent intent) {
                 if (intent.getAction().equals(TrackerService.UPDATE_TASK)) {
-                    if (mAdapter != null) {
+                    if (mAdapter != null && ShipperApplication.mService != null) {
                         mAdapter.setMyArray(ShipperApplication.mService.getListTask());
                         mAdapter.notifyDataSetChanged();
                     }
@@ -100,7 +100,8 @@ public class CurrentOrderTab extends Fragment {
             sceneList = ShipperApplication.mService.getListTask();
         // 3. create an adapter 
         mAdapter = new CurrentOrderAdapter(activity, sceneList);
-        mAdapter.setMyArray(ShipperApplication.mService.getListTask());
+        if (ShipperApplication.mService != null)
+            mAdapter.setMyArray(ShipperApplication.mService.getListTask());
         // 4. set adapter
         mRecyclerView.setAdapter(mAdapter);
         // 5. set item animator to DefaultAnimator
@@ -121,7 +122,7 @@ public class CurrentOrderTab extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (mAdapter != null) {
+        if (mAdapter != null && ShipperApplication.mService != null) {
             mAdapter.setMyArray(ShipperApplication.mService.getListTask());
             mAdapter.notifyDataSetChanged();
         }
@@ -180,7 +181,7 @@ public class CurrentOrderTab extends Fragment {
     }
 
     private void registerReceiver() {
-            getActivity().registerReceiver(mRegistrationBroadcastReceiver,
-                    new IntentFilter(TrackerService.UPDATE_TASK));
+        getActivity().registerReceiver(mRegistrationBroadcastReceiver,
+                new IntentFilter(TrackerService.UPDATE_TASK));
     }
 }

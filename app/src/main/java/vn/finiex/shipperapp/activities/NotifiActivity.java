@@ -45,4 +45,18 @@ public class NotifiActivity extends BaseActivity {
             }
         });
     }
+
+    public static boolean active = false;
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        active = true;
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        active = false;
+    }
 }

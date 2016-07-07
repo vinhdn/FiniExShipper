@@ -39,7 +39,7 @@ public class TaskDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_task_detail);
         landingId = getIntent().getIntExtra("id", -1);
         landingName = getIntent().getStringExtra("name");
-        if(TextUtils.isEmpty(landingName)){
+        if (TextUtils.isEmpty(landingName)) {
             landingName = "Đơn hàng";
         }
         if (landingId < 0) {
@@ -77,16 +77,17 @@ public class TaskDetailActivity extends BaseActivity {
     }
 
     private void getOrder() {
-        if (ShipperApplication.mService.getListTask() != null) {
-            for (Task task : ShipperApplication.mService.getListTask()) {
-                if (task.get_LadingID() == landingId) {
-                    listOrder = task.getOrder();
-                    mAdapter.setMyArray(listOrder);
-                    mAdapter.notifyDataSetChanged();
-                    break;
+        if (ShipperApplication.mService != null)
+            if (ShipperApplication.mService.getListTask() != null) {
+                for (Task task : ShipperApplication.mService.getListTask()) {
+                    if (task.get_LadingID() == landingId) {
+                        listOrder = task.getOrder();
+                        mAdapter.setMyArray(listOrder);
+                        mAdapter.notifyDataSetChanged();
+                        break;
+                    }
                 }
             }
-        }
     }
 
     @Override

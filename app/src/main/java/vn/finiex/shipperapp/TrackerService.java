@@ -148,16 +148,30 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                         if (listTask != null) {
                             sendBroadcast(new Intent(UPDATE_TASK));
                             System.out.println("***** TASK******");
-                            if (listTask.size() > 0 && mListTask != null && mListTask.size() > 0) {
-                                if (listTask.get(0).get_LadingID() != mListTask.get(0).get_LadingID()) {
-                                    Intent intent = new Intent(TrackerService.this, NotifiActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
-                                }else if(listTask.get(0).getOrder() != null && mListTask.get(0).getOrder() != null && listTask.get(0).getOrder().size() > mListTask.get(0).getOrder().size()){
-                                    Intent intent = new Intent(TrackerService.this, NotifiActivity.class);
-                                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                    startActivity(intent);
+                            try {
+                                if (listTask.size() > 0 && (mListTask == null || mListTask.size() == 0)) {
+                                    showNotifi();
+                                } else if (listTask.size() > 0 && mListTask != null && mListTask.size() > 0) {
+                                    if (listTask.get(0).get_LadingID() != mListTask.get(0).get_LadingID()) {
+                                        showNotifi();
+                                    } else if (listTask.get(0).getOrder() != null &&
+                                            mListTask.get(0).getOrder() != null) {
+                                        if (listTask.get(0).getOrder().size() > 0 &&
+                                                listTask.get(0).getOrder().size() > mListTask.get(0).getOrder().size()) {
+                                            showNotifi();
+                                        } else if (listTask.get(0).getOrder() != null &&
+                                                mListTask.get(0).getOrder() != null &&
+                                                !listTask.get(0).get_Notes().equals(mListTask.get(0).get_Notes())) {
+                                            showNotifi();
+                                        } else if (listTask.get(0).getOrder() != null &&
+                                                mListTask.get(0).getOrder() != null &&
+                                                !listTask.get(0).get_DateUpdate().equals(mListTask.get(0).get_DateUpdate())) {
+                                            showNotifi();
+                                        }
+                                    }
                                 }
+                            }catch (Exception ex){
+                                ex.printStackTrace();
                             }
                             mListTask = listTask;
                             for (Task task : mListTask) {
@@ -171,6 +185,14 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
             }
         };
         countDownTimer.start();
+    }
+
+    private void showNotifi() {
+        if (!NotifiActivity.active) {
+            Intent intent = new Intent(TrackerService.this, NotifiActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
     }
 
     public List<Task> getListTask() {

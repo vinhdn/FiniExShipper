@@ -101,9 +101,14 @@ public class ServerConnector {
 		try {
 			Response<List<Task>> taskList= service.getAllTask(accessToken.getUserId(), accessToken.getAccessToken()).execute();
 			List<Task> lt = taskList.body();
+			if(lt == null) return null;
 			Collections.reverse(lt);
 			for (Task task: lt) {
-				task.getOrderOnline();
+				try {
+					task.getOrderOnline();
+				}catch (Exception ex){
+					ex.printStackTrace();
+				}
 			}
 			return lt;
 		} catch (IOException e) {
@@ -139,7 +144,7 @@ public class ServerConnector {
 			public void onResponse(Call<Object> arg0, Response<Object> arg1) {
 				System.out.println(arg1.body());
 			}
-		});;
+		});
 	}
 	
 }
