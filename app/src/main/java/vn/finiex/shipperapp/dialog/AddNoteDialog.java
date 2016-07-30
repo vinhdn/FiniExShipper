@@ -7,6 +7,8 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import vn.finiex.shipperapp.R;
+import vn.finiex.shipperapp.ShipperApplication;
+import vn.finiex.shipperapp.http.ServerConnector;
+import vn.finiex.shipperapp.model.StatusOrder;
+import vn.finiex.shipperapp.utils.StringUtils;
 
 /**
  * Created by vinh on 7/7/16.
@@ -23,8 +29,15 @@ import vn.finiex.shipperapp.R;
 
 public class AddNoteDialog extends DialogFragment{
 
-    public static AddNoteDialog getInstance(int orderId, Context context){
+    private int orderId;
+    private int status;
+    private String oldNote;
+
+    public static AddNoteDialog getInstance(int orderId, int status, String note, Context context){
         AddNoteDialog dialog = new AddNoteDialog();
+        dialog.orderId = orderId;
+        dialog.status = status;
+        dialog.oldNote = note;
         return dialog;
     }
 
@@ -45,7 +58,26 @@ public class AddNoteDialog extends DialogFragment{
         view.findViewById(R.id.update_note_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String note = mNoteEdt.getText().toString();
+                final String note1 = mNoteEdt.getText().toString();
+                if(TextUtils.isEmpty(note1)) return;
+                if(oldNote == null) oldNote = "";
+                if(!TextUtils.isEmpty(oldNote))
+                    oldNote = " / " + oldNote;
+                final String note = note1 + oldNote;
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Object ob = ServerConnector.getInstance().updateOrder(orderId + "", new StatusOrder(status, note));
+                        if (ob != null) {
+                            Log.d("OBJECT", ob.toString());
+                            if(ShipperApplication.mService != null){
+                                ShipperApplication.mService.requestTask();
+                                dismiss();
+                            }
+                        }
+                    }
+                }).start();
+
             }
         });
         dialog.setContentView(view);
@@ -61,7 +93,7 @@ public class AddNoteDialog extends DialogFragment{
             lp.copyFrom(dialog.getWindow().getAttributes());
             lp.width = WindowManager.LayoutParams.MATCH_PARENT;
             lp.height = WindowManager.LayoutParams.WRAP_CONTENT;
-            lp.horizontalMargin = 10;
+            lp.horizontalMargin = 20;
             dialog.getWindow().setAttributes(lp);
             dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         }

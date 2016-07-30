@@ -13,21 +13,30 @@
         android:orientation="vertical"
         android:weightSum="1">
         <!--What you want to show-->
+
+        <android.support.v7.widget.AppCompatSpinner
+            android:id="@+id/spinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/shape_yellow_radius_corner" />
+
         <Button
             android:id="@+id/hoanthanh_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/button_turquoise_selector"
-            android:textColor="@color/white"
-            android:text="Hoàn thành" />
+            android:text="Cập nhật"
+            android:textColor="@color/white" />
+
         <Button
-            android:layout_marginTop="10dp"
             android:id="@+id/note_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:background="@drawable/button_turquoise_selector"
-            android:textColor="@color/white"
-            android:text="Ghi chú" />
+            android:text="Ghi chú"
+            android:textColor="@color/white" />
     </LinearLayout>
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -73,12 +82,13 @@
                         android:textStyle="bold" />
                 </RelativeLayout>
 
-                <TableLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
 
                     <TableRow
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="3dp"
                         android:gravity="center_vertical">
@@ -130,15 +140,38 @@
                         android:layout_margin="3dp"
                         android:gravity="center_vertical">
 
-                        <ImageView
-                            android:id="@+id/imageView2"
-                            android:layout_width="32dp"
-                            android:layout_height="32dp"
-                            android:layout_marginRight="10dp"
-                            android:src="@drawable/ic_phone" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_selectable_textview"
+                            android:padding="10dp"
+                            android:text="SĐT Nơi nhận:"
+                            android:textStyle="bold" />
 
                         <TextView
                             android:id="@+id/txtPhone"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_selectable_textview"
+                            android:text="Ko nhỏ nhắn đáng yêu nhưng có nhiều họ hangg trên đươnhf có dc đi ko Mẩu" />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_selectable_textview"
+                            android:padding="10dp"
+                            android:text="SĐT Nơi trả:"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/txtPhoneTra"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_selectable_textview"
@@ -163,8 +196,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/bg_selectable_textview"
-                            android:textStyle="bold|italic"
-                            android:text="@string/th_i_gian" />
+                            android:text="@string/th_i_gian"
+                            android:textStyle="bold|italic" />
                     </TableRow>
 
                     <TableRow
@@ -187,7 +220,9 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
                             android:background="@drawable/bg_selectable_textview"
-                            android:text="0" />
+                            android:text="0"
+                            android:textColor="#ffcc0000"
+                            android:textStyle="bold" />
                     </TableRow>
 
                     <TableRow
@@ -199,17 +234,20 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:padding="10dp"
                             android:background="@drawable/bg_selectable_textview"
-                            android:textStyle="bold"
-                            android:text="Phí ship:" />
+                            android:padding="10dp"
+                            android:text="Phí ship:"
+                            android:textStyle="bold" />
+
                         <TextView
                             android:id="@+id/fee_ship_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
                             android:background="@drawable/bg_selectable_textview"
-                            android:text="0" />
+                            android:text="0"
+                            android:textColor="#88cc0000"
+                            android:textStyle="bold" />
                     </TableRow>
 
                     <TableRow
@@ -231,9 +269,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
-                            android:background="@drawable/bg_selectable_textview"
-                            android:text="@string/ang_ch" />
+                            android:background="@drawable/shape_blue_radius_conner"
+                            android:padding="5dp"
+                            android:text="@string/ang_ch"
+                            android:textColor="@color/white"
+                            android:textStyle="bold" />
                     </TableRow>
+
                     <TableRow
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -254,10 +296,35 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
                             android:background="@drawable/bg_selectable_textview"
-                            android:text="" />
+                            android:text=""
+                            android:textAllCaps="true"
+                            android:textColor="@color/colorPrimary" />
+                    </TableRow>
+                    <TableRow
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="3dp"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@drawable/bg_selectable_textview"
+                            android:padding="10dp"
+                            android:text="Khách Ghi chú:"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/khach_note_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="10dp"
+                            android:background="@drawable/bg_selectable_textview"
+                            android:text=""
+                            android:textColor="@color/colorPrimary" />
                     </TableRow>
 
-                </TableLayout>
+                </LinearLayout>
             </LinearLayout>
         </android.support.v7.widget.CardView>
 

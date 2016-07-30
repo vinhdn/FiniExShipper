@@ -15,17 +15,17 @@ public class StringUtils {
     public static String DATE_FORMAT_SERVER_02 = "yyyy-MM-dd'T'HH:mm:ss";
     public static String DATE_FORMAT_SHOW = "HH 'giờ' mm 'phút', 'ngày' dd 'tháng' MM";
 
-    public static String getStringFromDate(String dateFormat, Date dateTime){
-        if(dateTime == null) return "";
+    public static String getStringFromDate(String dateFormat, Date dateTime) {
+        if (dateTime == null) return "";
         try {
             String date = new SimpleDateFormat(dateFormat).format(dateTime);
             return date;
-        }catch (Exception ex){
+        } catch (Exception ex) {
             return "";
         }
     }
 
-    public static Date getDateFromString(String dateFormat, String date){
+    public static Date getDateFromString(String dateFormat, String date) {
         try {
             Date dat = new SimpleDateFormat(dateFormat).parse(date);
             return dat;
@@ -34,36 +34,60 @@ public class StringUtils {
         return null;
     }
 
-    public static String dateToDate(String date){
+    public static String dateToDate(String date) {
         Date dat = getDateFromString(DATE_FORMAT_SERVER, date);
-        if(dat == null){
+        if (dat == null) {
             dat = getDateFromString(DATE_FORMAT_SERVER_02, date);
         }
-        if(dat == null) return "";
+        if (dat == null) return "";
         return getStringFromDate(DATE_FORMAT_SHOW, dat);
     }
 
-    public static String dataToFeauture(String date){
+    public static String dataToFeauture(String date) {
         try {
             Date past = getDateFromString(DATE_FORMAT_SERVER, date);
-            if(past == null){
+            if (past == null) {
                 past = getDateFromString(DATE_FORMAT_SERVER_02, date);
             }
-            if(past == null) return "Đang tính";
+            if (past == null) return "Đang tính";
             Date now = new Date();
             long time = past.getTime() - now.getTime();
-            if(time <= 0) return "Hết giờ";
+            if (time <= 0){
+                time = -time;
+                String retur = "Kết thúc ";
+                long day = TimeUnit.MILLISECONDS.toDays(time);
+                long hours = TimeUnit.MILLISECONDS.toHours(time);
+                long minu = TimeUnit.MILLISECONDS.toMinutes(time);
+                if (day > 0) retur += day + " ngày ";
+                if (hours > 0) retur += (hours % 24) + " giờ ";
+                if (minu >= 0) retur += (minu % 60) + " phút ";
+                retur += " trước";
+                return retur;
+            }
             String retur = "Còn ";
             long day = TimeUnit.MILLISECONDS.toDays(time);
             long hours = TimeUnit.MILLISECONDS.toHours(time);
             long minu = TimeUnit.MILLISECONDS.toMinutes(time);
-            if(day > 0) retur += (day % (60 * 60 * 60)) + " ngày ";
-            if(hours > 0) retur += (hours % (60 * 60)) + " giờ ";
-            if(minu >= 0) retur += (minu % 60) + " phút ";
+            if (day > 0) retur += day + " ngày ";
+            if (hours > 0) retur += (hours % 24) + " giờ ";
+            if (minu >= 0) retur += (minu % 60) + " phút ";
             return retur;
-        }
-        catch (Exception j){
+        } catch (Exception j) {
         }
         return "Đang tính";
+    }
+
+    public static long dateTimeFromText(String date) {
+        try {
+            Date past = getDateFromString(DATE_FORMAT_SERVER, date);
+            if (past == null) {
+                past = getDateFromString(DATE_FORMAT_SERVER_02, date);
+            }
+            if (past == null)
+                return 0;
+            else return past.getTime();
+        } catch (Exception j) {
+            return 0;
+        }
     }
 }

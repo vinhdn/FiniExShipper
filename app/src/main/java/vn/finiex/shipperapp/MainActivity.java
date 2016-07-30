@@ -4,6 +4,8 @@ import android.*;
 import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,18 +14,24 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.NotificationCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -32,14 +40,26 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
+import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import vn.finiex.shipperapp.activities.BaseActivity;
 import vn.finiex.shipperapp.adapter.DrawerLeftAdapter;
 import vn.finiex.shipperapp.adapter.ViewPageAdapter;
 import vn.finiex.shipperapp.config.Constant;
 import vn.finiex.shipperapp.http.GetUserInfoTask;
 import vn.finiex.shipperapp.http.ServerConnector;
+import vn.finiex.shipperapp.models.ImageResponse;
+import vn.finiex.shipperapp.models.ImageUpload;
 import vn.finiex.shipperapp.service.RegistrationIntentService;
 import vn.finiex.shipperapp.tabs.SlidingTabLayout;
+import vn.finiex.shipperapp.utils.StringUtils;
 
 public class MainActivity extends BaseActivity {
     private static final String TAG = MainActivity.class.getName();
@@ -90,7 +110,6 @@ public class MainActivity extends BaseActivity {
         startService(new Intent(this, TrackerService.class));
         setContentView(R.layout.activity_main);
         getDataIntent();
-
         mRegistrationBroadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -203,13 +222,101 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Uri dataUri = data.getData();
-            System.out.println(dataUri);
-            String datapath = getRealPathFromURI(this, dataUri);
-            System.out.println(datapath);
+            String url = "";
+            if(data == null){
+//                Toast.makeText(MainActivity.this, "Upload ảnh lỗi vui lòng thử lại", Toast.LENGTH_LONG).show();
+//                return;
+                url = file;
+            }else
+                url = data.getDataString();
+            if(TextUtils.isEmpty(url))
+                url = file;
+            if(TextUtils.isEmpty(url)){
+                Toast.makeText(MainActivity.this, "Upload ảnh lỗi vui lòng thử lại", Toast.LENGTH_LONG).show();
+                return;
+            }
+            galleryAddPic(url);
+            url = url.replace("file://", "");
+            if (url != null) {
+                showNotification();
+                ServerConnector.getInstance(true).uploadImage(url, new Callback<ImageResponse>() {
+                    @Override
+                    public void onResponse(Call<ImageResponse> call, Response<ImageResponse> response) {
+                        if(response.body() != null){
+                            String customer = "";
+                            if(ShipperApplication.get().getmUserInfo() != null){
+                                customer = ShipperApplication.get().getmUserInfo().getFullName();
+                            }
+                            Object ob = ServerConnector.getInstance().uploadImageFini(new ImageUpload(response.body().data.link, ShipperApplication.get().getAccessToken().getUserId(), customer,
+                                    StringUtils.getStringFromDate(StringUtils.DATE_FORMAT_SERVER_02, Calendar.getInstance().getTime())), new Callback<Object>() {
+                                @Override
+                                public void onResponse(Call<Object> call, Response<Object> response) {
+                                    cancelNotifi();
+                                    if(response.body() != null){
+                                        Toast.makeText(MainActivity.this, "Upload ảnh thành công", Toast.LENGTH_SHORT).show();
+                                    }else {
+                                        Toast.makeText(MainActivity.this, "Upload ảnh lỗi vui lòng thử lại", Toast.LENGTH_SHORT).show();;
+                                    }
+                                }
 
-            ServerConnector.getInstance().uploadImage(datapath);
+                                @Override
+                                public void onFailure(Call<Object> call, Throwable t) {
+                                    Toast.makeText(MainActivity.this, "Upload ảnh lỗi vui lòng thử lại", Toast.LENGTH_SHORT).show();;
+                                }
+                            });
+                        }else {
+                            Toast.makeText(MainActivity.this, "Upload ảnh lỗi vui lòng thử lại", Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
+                    @Override
+                    public void onFailure(Call<ImageResponse> call, Throwable t) {
+                        cancelNotifi();
+                        Toast.makeText(MainActivity.this, "Upload ảnh lỗi vui lòng thử lại", Toast.LENGTH_SHORT);
+                    }
+                });
+            }else{
+                Toast.makeText(MainActivity.this, "Upload ảnh lỗi vui lòng thử lại", Toast.LENGTH_LONG).show();
+                return;
+            }
+        }
+    }
+
+    private void showNotification(){
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setContentText("Đang upload...");
+        builder.setContentTitle("Tải ảnh");
+        builder.setSmallIcon(R.drawable.ic_launcher);
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+// mId allows you to update the notification later on.
+        mNotificationManager.notify(10, builder.build());
+    }
+
+    private void cancelNotifi(){
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        mNotificationManager.cancel(10);
+    }
+
+    private void galleryAddPic(String path) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(path);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkPermisstion();
+        if(!isGPS(this)){
+            Toast.makeText(this, "Bạn cần bật GPS để cập nhật vị trí", Toast.LENGTH_LONG);
+            Intent callGPSSettingIntent = new Intent(
+                    android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivity(callGPSSettingIntent);
         }
     }
 
@@ -273,28 +380,93 @@ public class MainActivity extends BaseActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        stopService(new Intent(this, TrackerService.class));
+//        stopService(new Intent(this, TrackerService.class));
     }
 
     @TargetApi(Build.VERSION_CODES.M)
     private void checkPermisstion() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
                     != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE},
                         69);
-            }if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
+            }
+            if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                         70);
-            }if (checkSelfPermission(Manifest.permission.CALL_PHONE)
+            }
+            if (checkSelfPermission(Manifest.permission.CALL_PHONE)
                     != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{android.Manifest.permission.CALL_PHONE},
                         71);
-            }if (checkSelfPermission(Manifest.permission.CAMERA)
+            }
+            if (checkSelfPermission(Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(new String[]{Manifest.permission.CAMERA},
                         72);
             }
+        }
     }
+
+    public void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = null;
+            photoFile = getOutputMediaFile();
+            // Error occurred while creating the File
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,
+                        Uri.fromFile(photoFile));
+                startActivityForResult(takePictureIntent, MainActivity.REQUEST_IMAGE_CAPTURE);
+            }
+        }
+    }
+
+    public String file = "";
+
+    public File getOutputMediaFile() {
+        // To be safe, you should check that the SDCard is mounted
+        // using Environment.getExternalStorageState() before doing this.
+
+        File mediaStorageDir = new File(Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_PICTURES), "FiniexShipper");
+        // This location works best if you want the created images to be shared
+        // between applications and persist after your app has been uninstalled.
+
+        // Create the storage directory if it does not exist
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d("MyCameraApp", "failed to create directory");
+                return null;
+            }
+        }
+
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+        File mediaFile;
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator +
+                "IMG_" + timeStamp + ".jpg");
+        file = mediaFile.getAbsolutePath();
+        return mediaFile;
+    }
+
+
+    // check GPS
+    public boolean isGPS(Context cont) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (cont.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
+                checkPermisstion();
+                return true;
+            }
+        }
+        LocationManager locationManager = (LocationManager) cont
+                .getSystemService(Context.LOCATION_SERVICE);
+        return locationManager
+                .isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
 }

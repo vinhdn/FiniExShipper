@@ -3,7 +3,7 @@ package vn.finiex.shipperapp.model;
 import com.google.gson.annotations.SerializedName;
 
 public class UserLocation {
-	@SerializedName("Latitude")
+		@SerializedName("Latitude")
 	private double lat;
 	@SerializedName("Longitude")
 	private double lon;

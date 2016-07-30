@@ -3,12 +3,14 @@ package vn.finiex.shipperapp.http;
 import java.util.List;
 import java.util.Map;
 
+import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
 import retrofit2.http.FieldMap;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -29,6 +31,8 @@ import vn.finiex.shipperapp.model.StatusOrder;
 import vn.finiex.shipperapp.model.Task;
 import vn.finiex.shipperapp.model.UserInfo;
 import vn.finiex.shipperapp.model.UserLocation;
+import vn.finiex.shipperapp.models.ImageResponse;
+import vn.finiex.shipperapp.models.ImageUpload;
 
 interface ShiperServerAPI {
 
@@ -53,7 +57,10 @@ interface ShiperServerAPI {
     @GET("task/{uid}")
     Call<List<Task>> getAllTask(@Path("uid") String uId,
                                 @Query("access_token") String token);
-    
+
+    @GET("task/{uid}")
+    Call<List<Task>> getAllTask(@Query("access_token") String token);
+
     @GET("order/{uid}")
     Call<List<Task>> getAllOrder(@Path("uid") String uId,
                                  @Query("access_token") String token);
@@ -137,4 +144,25 @@ interface ShiperServerAPI {
     @DELETE
     Call<ResponseBody> deleteObject(@Url String path,
                                     @QueryMap Map<String, String> options);
+
+    /****************************************
+     * Upload
+     * Image upload API
+     */
+
+    /**
+     * @param auth        #Type of authorization for upload
+     * @param file        image
+     */
+    @FormUrlEncoded
+    @POST("/3/image")
+    Call<ImageResponse> postImage(
+            @Header("Authorization") String auth,
+            @Field("image") String file
+    );
+
+    @Headers("Content-Type:application/json;charset=utf-8")
+    @POST("images")
+    Call<Object> uploadImageFini(@Query("access_token") String token,
+                                @Body ImageUpload object);
 }

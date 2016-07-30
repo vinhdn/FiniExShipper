@@ -1,7 +1,13 @@
 package vn.finiex.shipperapp.model;
 
-public class Order{
+import java.util.Date;
+
+import vn.finiex.shipperapp.utils.StringUtils;
+
+public class Order implements Comparable<Order>{
 	private int _ID;
+
+    private int ID;
 
 	private boolean IsLog;
 
@@ -41,8 +47,11 @@ public class Order{
     private String NguoiNhan;
 
     private String Phone_AM;
+    private String Notes_AM;
 
     private String Notes;
+
+    private long dealine = -1;
 
     public boolean isLog() {
         return IsLog;
@@ -133,6 +142,7 @@ public class Order{
     }
 
     public String getNotes() {
+        if(Notes == null) return "";
         return Notes;
     }
 
@@ -162,6 +172,7 @@ public class Order{
 
     public String get_Notes ()
     {
+        if(_Notes == null) return "";
         return _Notes;
     }
 
@@ -260,5 +271,52 @@ public class Order{
 
     public void setOrderID(int orderID) {
         OrderID = orderID;
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) {
+        this.ID = ID;
+    }
+
+    @Override
+    public int compareTo(Order order) {
+        if(order.Status == 4 && Status == 4){
+            if(order.getDealine() > getDealine()){
+                return 1;
+            }else
+                return -1;
+        }else if(Status == 4){
+            return 1;
+        }else if(order.Status == 4){
+            return  -1;
+        }else {
+            if(order.getDealine() > getDealine()){
+                return 1;
+            }else
+                return -1;
+        }
+    }
+
+    public long getDealine() {
+        if(dealine <= 0 && dealine > -2){
+            dealine = StringUtils.dateTimeFromText(EndDate);
+        }
+        dealine = dealine - System.currentTimeMillis();
+        return dealine;
+    }
+
+    public void setDealine(long dealine) {
+        this.dealine = dealine;
+    }
+
+    public String getNotes_AM() {
+        return Notes_AM;
+    }
+
+    public void setNotes_AM(String notes_AM) {
+        Notes_AM = notes_AM;
     }
 }

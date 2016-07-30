@@ -69,6 +69,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
 
     GoogleApiClient mGoogleApiClient;
     LocationRequest mLocationRequest;
+    private int numberOrderInFirstTask = 0;
     private List<Task> mListTask;
 
     public TrackerService() {
@@ -170,7 +171,7 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
                                         }
                                     }
                                 }
-                            }catch (Exception ex){
+                            } catch (Exception ex) {
                                 ex.printStackTrace();
                             }
                             mListTask = listTask;
@@ -394,17 +395,33 @@ public class TrackerService extends Service implements GoogleApiClient.Connectio
 
     @Override
     public void onLocationChanged(Location location) {
-        if (bestLocation == null || isBetterLocation(location, bestLocation)) {
-            bestLocation = location;
-            Log.d("Location Changed", location.toString());
-            AccessToken accessToken = ((ShipperApplication) getApplicationContext()).getAccessToken();
-            connector.updateUserLocation(accessToken.getUserId(), accessToken.getAccessToken(), new UserLocation(location.getLatitude(), location.getLongitude()));
-        }
+        if(location == null) return;
+        bestLocation = location;
+        Log.d("Location Changed", location.toString());
+        AccessToken accessToken = ((ShipperApplication) getApplicationContext()).getAccessToken();
+        connector.updateUserLocation(accessToken.getUserId(), accessToken.getAccessToken(), new UserLocation(location.getLatitude(), location.getLongitude()));
         if (location != null)
             Log.d("Location", location.toString());
         else {
             Log.d("Location", "NULL");
 
+        }
+    }
+
+    public int getNumberOrderInFirstTask() {
+        return numberOrderInFirstTask;
+    }
+
+    public void setNumberOrderInFirstTask(int numberOrderInFirstTask) {
+        this.numberOrderInFirstTask = numberOrderInFirstTask;
+    }
+
+    public void checkNotifi() {
+        if (mListTask != null && mListTask.size() > 0 && mListTask.get(0).getOrder() != null) {
+            if (numberOrderInFirstTask > 0 && mListTask.get(0).getOrder().size() > numberOrderInFirstTask) {
+                showNotifi();
+            }
+            numberOrderInFirstTask = mListTask.get(0).getOrder().size();
         }
     }
 }

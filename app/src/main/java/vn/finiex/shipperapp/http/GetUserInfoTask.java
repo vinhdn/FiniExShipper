@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
+import vn.finiex.shipperapp.ShipperApplication;
 import vn.finiex.shipperapp.adapter.DrawerLeftAdapter;
 import vn.finiex.shipperapp.model.AccessToken;
 import vn.finiex.shipperapp.model.UserInfo;
@@ -27,7 +28,7 @@ public class GetUserInfoTask extends AsyncTask<AccessToken, Void, String>{
 		String accessToken  = params[0].getAccessToken();
 		
 //		ServerConnector.getInstance().getUserInfo(uId, accessToken);		
-		return HTTPUtils.GET(HTTPUtils.URL_USER_INFO + "/" + uId+"?access_token="+accessToken );
+		return HTTPUtils.GET(HTTPUtils.URL_USER_INFO + uId+"?access_token="+accessToken );
 	}
 
 	@Override
@@ -36,6 +37,7 @@ public class GetUserInfoTask extends AsyncTask<AccessToken, Void, String>{
 		super.onPostExecute(result);
 //		Toast.makeText(context, result, Toast.LENGTH_LONG).show();
 		UserInfo userInfo = new Gson().fromJson(result, UserInfo.class);
+		ShipperApplication.get().setmUserInfo(userInfo);
 		adapter.setUserInfo(userInfo);
 	}
 }

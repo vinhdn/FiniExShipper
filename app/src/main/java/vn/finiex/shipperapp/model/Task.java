@@ -2,6 +2,7 @@ package vn.finiex.shipperapp.model;
 
 import android.content.Intent;
 
+import java.util.Collections;
 import java.util.List;
 
 import vn.finiex.shipperapp.ShipperApplication;
@@ -180,6 +181,12 @@ public class Task {
     public void getOrderOnline(){
         if(_LadingID >= 0){
             this.order = ServerConnector.getInstance().getOrderOfTask(_LadingID);
+            if(this.order != null && this.order.size() >0){
+                Collections.sort(this.order);
+            }
+            if(ShipperApplication.mService != null && _LadingID == ShipperApplication.mService.getListTask().get(0).get_LadingID()){
+                ShipperApplication.mService.checkNotifi();
+            }
             ShipperApplication.get().sendBroadcast(new Intent(UPDATE_TASK));
         }
     }

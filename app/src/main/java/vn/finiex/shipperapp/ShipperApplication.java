@@ -12,6 +12,7 @@ import android.support.multidex.MultiDex;
 
 import vn.finiex.shipperapp.http.ServerConnector;
 import vn.finiex.shipperapp.model.AccessToken;
+import vn.finiex.shipperapp.model.UserInfo;
 
 public class ShipperApplication extends Application {
 	
@@ -28,6 +29,7 @@ public class ShipperApplication extends Application {
 	SharedPreferences preferences;
 
 	static ShipperApplication instance;
+	private UserInfo mUserInfo;
 
 	public static ShipperApplication get(){
 		return instance;
@@ -85,5 +87,13 @@ public class ShipperApplication extends Application {
 	
 	public AccessToken getAccessToken() {
 		return accessToken;
+	}
+
+	public UserInfo getmUserInfo() {
+		return mUserInfo;
+	}
+
+	public void setmUserInfo(UserInfo mUserInfo) {
+		this.mUserInfo = mUserInfo;
 	}
 }

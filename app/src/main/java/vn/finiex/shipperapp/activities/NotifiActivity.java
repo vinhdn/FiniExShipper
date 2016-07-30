@@ -11,6 +11,7 @@ import android.view.View;
 
 import vn.finiex.shipperapp.R;
 
+
 public class NotifiActivity extends BaseActivity {
 
     Vibrator v;

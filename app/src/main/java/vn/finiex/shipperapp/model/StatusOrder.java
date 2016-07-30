@@ -9,11 +9,18 @@ import com.google.gson.annotations.SerializedName;
 public class StatusOrder {
     @SerializedName("Status")
     private int status;
+    @SerializedName("oStatus")
+    private int oStatus;
     @SerializedName("Notes")
     private String note;
 
     public StatusOrder(int status, String note) {
         this.status = status;
+        if(this.status > 3)
+            this.oStatus = status;
+        else this.oStatus = 2;
+//        if(this.status == 2)
+//            oStatus = 2;
         this.note = note;
     }
 
@@ -31,5 +38,13 @@ public class StatusOrder {
 
     public void setNote(String note) {
         this.note = note;
+    }
+
+    public int getoStatus() {
+        return oStatus;
+    }
+
+    public void setoStatus(int oStatus) {
+        this.oStatus = oStatus;
     }
 }

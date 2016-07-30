@@ -43,7 +43,8 @@
                     android:textStyle="bold" />
             </RelativeLayout>
 
-            <TableLayout
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" >
 
@@ -156,7 +157,7 @@
                         android:background="@drawable/bg_selectable_textview"
                         android:text="@string/ang_ch" />
                 </TableRow>
-            </TableLayout>
+            </LinearLayout>
         </LinearLayout>
     </android.support.v7.widget.CardView>
 

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="list_lauch">
+        <item>Đã nhận</item>
+        <item>Đã chuyển đơn</item>
+        <item>Đã hoàn thành</item>
+        <item>Chuyển hoàn</item>
+    </string-array>
+</resources>
