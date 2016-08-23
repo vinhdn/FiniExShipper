@@ -184,10 +184,10 @@ public class Task {
             if(this.order != null && this.order.size() >0){
                 Collections.sort(this.order);
             }
+            ShipperApplication.get().sendBroadcast(new Intent(UPDATE_TASK));
             if(ShipperApplication.mService != null && _LadingID == ShipperApplication.mService.getListTask().get(0).get_LadingID()){
                 ShipperApplication.mService.checkNotifi();
             }
-            ShipperApplication.get().sendBroadcast(new Intent(UPDATE_TASK));
         }
     }
 }

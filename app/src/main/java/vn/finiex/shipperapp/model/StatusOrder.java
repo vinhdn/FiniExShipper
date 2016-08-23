@@ -16,9 +16,9 @@ public class StatusOrder {
 
     public StatusOrder(int status, String note) {
         this.status = status;
-        if(this.status > 3)
-            this.oStatus = status;
-        else this.oStatus = 2;
+        this.oStatus = status;
+        if(this.status <= 3)
+            this.oStatus = 2;
 //        if(this.status == 2)
 //            oStatus = 2;
         this.note = note;

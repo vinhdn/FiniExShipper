@@ -30,6 +30,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import vn.finiex.shipperapp.ShipperApplication;
 import vn.finiex.shipperapp.model.AccessToken;
 import vn.finiex.shipperapp.model.Order;
+import vn.finiex.shipperapp.model.Payment;
 import vn.finiex.shipperapp.model.StatusOrder;
 import vn.finiex.shipperapp.model.Task;
 import vn.finiex.shipperapp.model.UserInfo;
@@ -123,6 +124,17 @@ public class ServerConnector {
 
     public Object updateOrder(String orderId, StatusOrder data) {
         Call<Object> call = service.updateOrder(orderId, accessToken.getAccessToken(), data);
+        try {
+            Response<Object> ro = call.execute();
+            return ro.body();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Object payment(Payment data) {
+        Call<Object> call = service.updatePayment(accessToken.getAccessToken(), data);
         try {
             Response<Object> ro = call.execute();
             return ro.body();

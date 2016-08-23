@@ -27,6 +27,7 @@ import retrofit2.http.QueryMap;
 import retrofit2.http.Streaming;
 import retrofit2.http.Url;
 import vn.finiex.shipperapp.model.Order;
+import vn.finiex.shipperapp.model.Payment;
 import vn.finiex.shipperapp.model.StatusOrder;
 import vn.finiex.shipperapp.model.Task;
 import vn.finiex.shipperapp.model.UserInfo;
@@ -53,7 +54,12 @@ interface ShiperServerAPI {
     Call<Object> updateOrder(@Path("id") String order,
                                 @Query("access_token") String token,
                                 @Body StatusOrder object);
-   
+
+    @Headers("Content-Type:application/json;charset=utf-8")
+    @PUT("pmoney")
+    Call<Object> updatePayment(@Query("access_token") String token,
+                             @Body Payment object);
+
     @GET("task/{uid}")
     Call<List<Task>> getAllTask(@Path("uid") String uId,
                                 @Query("access_token") String token);

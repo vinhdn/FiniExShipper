@@ -32,6 +32,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Currency;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,6 +42,7 @@ import vn.finiex.shipperapp.activities.TaskDetailActivity;
 import vn.finiex.shipperapp.dialog.AddNoteDialog;
 import vn.finiex.shipperapp.http.ServerConnector;
 import vn.finiex.shipperapp.model.Order;
+import vn.finiex.shipperapp.model.Payment;
 import vn.finiex.shipperapp.model.StatusOrder;
 import vn.finiex.shipperapp.model.Task;
 import vn.finiex.shipperapp.utils.StringUtils;
@@ -165,6 +167,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 //            vh.mHoanthanhBtn.setText(getTrangThaiStr(order.getStatus()));
 //            vh.mHoanthanhBtn.setEnabled(false);
 //        }
+        swipeLayout.setSwipeEnabled(true);
         switch (order.getStatus()){
             case 1:
                 vh.mStatusTv.setBackgroundResource(R.drawable.shape_yellow_radius_corner);
@@ -177,6 +180,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
                 break;
             case 4:
                 vh.mStatusTv.setBackgroundResource(R.drawable.shape_green_radius_corner);
+                swipeLayout.setSwipeEnabled(false);
                 break;
             case 5:
                 vh.mStatusTv.setBackgroundResource(R.drawable.shape_red_radius_conner);
@@ -307,6 +311,9 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
                             if(ShipperApplication.mService != null){
                                 ShipperApplication.mService.requestTask();
                             }
+                        }
+                        if(spinner.getSelectedItemPosition() + 2 == 4){
+                            Object obp = ServerConnector.getInstance().payment(new Payment(ShipperApplication.get().getAccessToken().getUserId(), (int)myArray.get(i).getPrices(),(int)myArray.get(i).getPriceShip(),StringUtils.getStringFromDate(StringUtils.DATE_FORMAT_SERVER_02, new Date())));
                         }
                     }
                 }).start();
