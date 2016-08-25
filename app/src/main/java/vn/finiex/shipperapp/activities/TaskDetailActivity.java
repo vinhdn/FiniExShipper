@@ -33,6 +33,12 @@ public class TaskDetailActivity extends BaseActivity {
     private List<Order> listOrder = new ArrayList<>();
     private OrderAdapter mAdapter;
 
+    public void setUpdateMoney(boolean updateMoney) {
+        isUpdateMoney = updateMoney;
+    }
+
+    private boolean isUpdateMoney = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -100,11 +106,15 @@ public class TaskDetailActivity extends BaseActivity {
     protected void onPause() {
         super.onPause();
         unregisterReceiver(mRegistrationBroadcastReceiver);
+        if(isUpdateMoney)
+            setResult(RESULT_OK);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if(isUpdateMoney)
+            setResult(RESULT_OK);
     }
 
 

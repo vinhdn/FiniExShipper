@@ -56,7 +56,7 @@ interface ShiperServerAPI {
                                 @Body StatusOrder object);
 
     @Headers("Content-Type:application/json;charset=utf-8")
-    @PUT("pmoney")
+    @POST("pmoney")
     Call<Object> updatePayment(@Query("access_token") String token,
                              @Body Payment object);
 

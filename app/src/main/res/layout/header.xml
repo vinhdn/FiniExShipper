@@ -121,7 +121,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="16dp"
                     android:layout_marginTop="5dp"
-                    android:text="Quang duong : 10,000 m"
                     android:textColor="#ffffff"
                     android:textSize="14sp"
                     android:textStyle="normal" />

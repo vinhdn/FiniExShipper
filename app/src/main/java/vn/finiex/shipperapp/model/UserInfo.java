@@ -1,13 +1,13 @@
 package vn.finiex.shipperapp.model;
 
 public class UserInfo {
-	private String aPayment;
+	private Long aPayment;
 
 	private String Phone;
 
 	private String TotalOrder;
 
-	private String aOutoMoney;
+	private Long aOutoMoney;
 
 	private String UserID;
 
@@ -15,7 +15,7 @@ public class UserInfo {
 
 	private String DistrictID;
 
-	private String pShip;
+	private Long pShip;
 
 	private String Active;
 
@@ -31,13 +31,13 @@ public class UserInfo {
 
 	private String LocaltionCurrent;
 
-	private String pMoney;
+	private Long pMoney;
 
-	public String getAPayment() {
+	public Long getAPayment() {
 		return aPayment;
 	}
 
-	public void setAPayment(String aPayment) {
+	public void setAPayment(Long aPayment) {
 		this.aPayment = aPayment;
 	}
 
@@ -57,11 +57,11 @@ public class UserInfo {
 		this.TotalOrder = TotalOrder;
 	}
 
-	public String getAOutoMoney() {
+	public Long getAOutoMoney() {
 		return aOutoMoney;
 	}
 
-	public void setAOutoMoney(String aOutoMoney) {
+	public void setAOutoMoney(Long aOutoMoney) {
 		this.aOutoMoney = aOutoMoney;
 	}
 
@@ -89,11 +89,11 @@ public class UserInfo {
 		this.DistrictID = DistrictID;
 	}
 
-	public String getPShip() {
+	public Long getPShip() {
 		return pShip;
 	}
 
-	public void setPShip(String pShip) {
+	public void setPShip(Long pShip) {
 		this.pShip = pShip;
 	}
 
@@ -153,11 +153,11 @@ public class UserInfo {
 		this.LocaltionCurrent = LocaltionCurrent;
 	}
 
-	public String getPMoney() {
+	public Long getPMoney() {
 		return pMoney;
 	}
 
-	public void setPMoney(String pMoney) {
+	public void setPMoney(Long pMoney) {
 		this.pMoney = pMoney;
 	}
 

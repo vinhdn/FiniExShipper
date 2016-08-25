@@ -5,6 +5,7 @@ import java.util.List;
 
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -33,7 +34,7 @@ import vn.finiex.shipperapp.utils.StringUtils;
 
 public class CurrentOrderAdapter extends RecyclerView.Adapter<CurrentOrderAdapter.ViewHolder> {
 
-    Context mContext;
+    Activity mContext;
 
     public List<Task> getMyArray() {
         return myArray;
@@ -45,7 +46,7 @@ public class CurrentOrderAdapter extends RecyclerView.Adapter<CurrentOrderAdapte
 
     List<Task> myArray = null;
 
-    public CurrentOrderAdapter(Context context, List<Task> myArray) {
+    public CurrentOrderAdapter(Activity context, List<Task> myArray) {
         this.mContext = context;
         this.myArray = myArray;
     }
@@ -132,7 +133,7 @@ public class CurrentOrderAdapter extends RecyclerView.Adapter<CurrentOrderAdapte
                 Intent intent = new Intent(mContext, TaskDetailActivity.class);
                 intent.putExtra("id", myArray.get(i).get_LadingID());
                 intent.putExtra("name", myArray.get(i).get_LadingName());
-                mContext.startActivity(intent);
+                mContext.startActivityForResult(intent, 11);
             }
         });
     }

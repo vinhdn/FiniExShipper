@@ -215,12 +215,18 @@ public class MainActivity extends BaseActivity {
         });
 
         tabs.setViewPager(pager);
-        (new GetUserInfoTask(this, mDrawerLeftAdapter)).execute(((ShipperApplication) getApplicationContext()).getAccessToken());
+        getUserInfo();
+    }
 
+    public void getUserInfo(){
+        (new GetUserInfoTask(this, mDrawerLeftAdapter)).execute(((ShipperApplication) getApplicationContext()).getAccessToken());
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode == 11 && resultCode == RESULT_OK){
+            getUserInfo();
+        }else
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             String url = "";
             if(data == null){

@@ -5,6 +5,7 @@ package vn.finiex.shipperapp.adapter;
  */
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -52,7 +53,7 @@ import static java.security.AccessController.getContext;
 
 public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> {
 
-    Context mContext;
+    TaskDetailActivity mContext;
 
     public List<Order> getMyArray() {
         return myArray;
@@ -64,7 +65,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
 
     List<Order> myArray = null;
 
-    public OrderAdapter(Context context, List<Order> myArray) {
+    public OrderAdapter(TaskDetailActivity context, List<Order> myArray) {
         this.mContext = context;
         this.myArray = myArray;
     }
@@ -305,15 +306,21 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.ViewHolder> 
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
-                        Object ob = ServerConnector.getInstance().updateOrder((myArray.get(i).getID())+ "", new StatusOrder((spinner.getSelectedItemPosition() + 2), "Cập nhật trạng thái " + getTrangThaiStr(spinner.getSelectedItemPosition() + 2) + " / " +  myArray.get(i).getNotes()));
+                        int trangthai = spinner.getSelectedItemPosition() + 2;
+                        Object ob = ServerConnector.getInstance().updateOrder((myArray.get(i).getID())+ "", new StatusOrder(trangthai, "Cập nhật trạng thái " + getTrangThaiStr(trangthai) + " / " +  myArray.get(i).getNotes()));
                         if (ob != null) {
                             Log.d("OBJECT", ob.toString());
                             if(ShipperApplication.mService != null){
                                 ShipperApplication.mService.requestTask();
                             }
-                        }
-                        if(spinner.getSelectedItemPosition() + 2 == 4){
-                            Object obp = ServerConnector.getInstance().payment(new Payment(ShipperApplication.get().getAccessToken().getUserId(), (int)myArray.get(i).getPrices(),(int)myArray.get(i).getPriceShip(),StringUtils.getStringFromDate(StringUtils.DATE_FORMAT_SERVER_02, new Date())));
+                            if(trangthai == 4){
+                                Object obp = ServerConnector.getInstance().payment(new Payment(ShipperApplication.get().getAccessToken().getUserId(), (int)myArray.get(i).getPrices(),(int)myArray.get(i).getPriceShip(),StringUtils.getStringFromDate(StringUtils.DATE_FORMAT_SERVER_02, new Date())));
+                                if(obp != null){
+                                    mContext.setUpdateMoney(true);
+                                    mContext.setResult(Activity.RESULT_OK);
+                                    Log.d("OBJECT", obp.toString());
+                                }
+                            }
                         }
                     }
                 }).start();
